@@ -14,7 +14,7 @@
     "redux-thunk": "^2.4.1"
   },
   "devDependencies": {
-    "@zeit/next-less": "1.0.2-canary.2",
+    "@zeit/next-less": "^1.0.2-canary.2",
     "antd": "3.16.5",
     "babel-plugin-import": "1.11.0",
     "babel-plugin-styled-components": "1.10.0",
