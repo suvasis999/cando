@@ -2,7 +2,7 @@ import { Card, Divider } from 'antd';
 import { Button, Checkbox, Form, Input, Message, Row,Col,Select,Icon } from 'antd';
 import styled from 'styled-components';
 import FixedColumnsHeader from './controls/fixed-columns-header';
-import {getCandidateList} from '../pages/config/appServices';
+import {getCandidateList} from '../config/appServices';
 import { Table } from 'antd';
 import React, { useState, useEffect } from "react";
 import Link from 'next/link';

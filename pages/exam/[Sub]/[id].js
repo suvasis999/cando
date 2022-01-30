@@ -21,7 +21,7 @@ import {
   TrendingUp,ExternalLink,Eye
 } from 'react-feather';
 import { theme } from '../../../components/styles/GlobalStyles';
-import {candonlineExamHealth} from '../../config/appServices';
+import {candonlineExamHealth} from '../../../config/appServices';
 
 
 const FormItem = Form.Item;

@@ -22,7 +22,7 @@ import {
   TrendingUp,ExternalLink,Eye
 } from 'react-feather';
 import { theme } from '../../components/styles/GlobalStyles';
-import {candquesDetails} from '../config/appServices';
+import {candquesDetails} from '../../config/appServices';
 import Link from 'next/link';
 const Content = styled.div`
   width: 100%;

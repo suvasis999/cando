@@ -11,7 +11,7 @@ import Textarea from './controls/textarea';
 import Basic from './controls/basic';
 import multiple from './controls/multiple';
 import {addCustomerDetails} 
-from '../pages/config/appServices';
+from '../config/appServices';
 const { Step } = Steps;
 const { Item } = Form;
 

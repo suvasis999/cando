@@ -12,7 +12,7 @@ import Basic from './controls/basic';
 import multiple from './controls/multiple';
 import {getCandidateList,addCandidate,addCandidateEmp,candAvail,candWorkexp,
 candEmergencyCont,candAccountDtls,} 
-from '../pages/config/appServices';
+from '../config/appServices';
 const { Step } = Steps;
 const { Item } = Form;
 
