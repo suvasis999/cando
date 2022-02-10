@@ -36,7 +36,7 @@ return(
         </Link>
         <h5 className="mb-0 mt-3">Sign in</h5>
 
-        <p className="text-muted">get started with our service</p>
+        <p className="text-muted">get started with our service (Test)</p>
       </div>
 
       <Form
