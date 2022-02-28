@@ -1,0 +1,102 @@
+import React, { useEffect,useState } from 'react';
+import { Card, Divider } from 'antd';
+import TabBar from '../../../components/controls/custom-tab-bar';
+import { useRouter } from "next/router";
+import { List, Avatar } from 'antd';
+import {getCustomerdetailsArr} 
+from '../../../config/appServices';  
+import { Tabs } from 'antd';
+import { Sticky, StickyContainer } from 'react-sticky'; 
+
+const renderTabBar = (props, DefaultTabBar) => (
+  <Sticky bottomOffset={80}>
+    {({ style }) => (
+      <DefaultTabBar
+        {...props}
+        style={{ ...style, zIndex: 1, background: '#fff' }}
+      />
+    )}
+  </Sticky>
+);
+
+const Demo = () => { 
+  const [candtls, setcandtls] = useState([]);
+  const [canempdtls, setcanempdtls] = useState([]);
+  const [canempavaildtls, setcanempavaildtls] = useState([]);
+  const [canworkdtls, setcanworkdtls] = useState([]);
+  const [canemcondtls, setcanemcondtls] = useState([]);
+  const [canacdtls, setcanacdtls] = useState([]);
+  const router = useRouter();
+  const TabPane = Tabs.TabPane;
+
+
+	useEffect(() => {
+  		 const { id} = router.query;
+  		 console.log('id is'+id);
+  		 getCustomerDtls();
+  		 
+	}, [router]);
+
+async function getCustomerDtls(){
+   const { id} = router.query;
+   const data = await getCustomerdetailsArr(id)
+    .then(result=>{
+      if(result.message=='SUCCESS'){
+      	setcandtls(result.data.customer_dtls);
+      	console.log(result.data.customer_dtls);
+      }
+  })}
+
+
+
+    return (
+      <Card bodyStyle={{ padding: 0 }} id="components-button-demo">
+        
+        <Divider orientation="left">
+          <small>Customer Details</small>
+        </Divider>
+        <div className="p-4">
+
+
+        	<StickyContainer>
+			    <Tabs defaultActiveKey="1" renderTabBar={renderTabBar}>
+			      <TabPane tab="Customer Details" key="1" style={{minHeight:500 }}>
+			        
+			       		<List
+					     bordered
+					      dataSource={candtls}
+					      renderItem={item => <List.Item>Name: {item.custName} </List.Item>}
+					      className="mb-4"
+					    />
+
+					    <List
+					     bordered
+					      dataSource={candtls}
+					      renderItem={item => <List.Item>Address: {item.custAddress} </List.Item>}
+					      className="mb-4"
+					    />
+
+					     <List
+					     bordered
+					      dataSource={candtls}
+					      renderItem={item => <List.Item>Details: {item.custdtls} </List.Item>}
+					      className="mb-4"
+					    />
+					    
+					   
+				    
+			      </TabPane>
+			     
+			    </Tabs>
+			  </StickyContainer>
+
+          
+        </div>
+
+       
+      </Card> 
+    );
+ 
+}
+
+export default Demo; 

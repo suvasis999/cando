@@ -13,7 +13,7 @@ class App extends React.Component {
   };
 
   handleOk = () => {
-    this.setState({ loading: true });
+    this.setState({ loading: true }); 
     setTimeout(() => {
       this.setState({ loading: false, visible: false });
     }, 3000);

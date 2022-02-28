@@ -82,7 +82,9 @@ const MainHeader = (props) => {
             </Menu.Item>
           )}
         
-         
+         <Menu.Item onClick={() => dispatch({ type: "options" })}>
+            <Settings size={20} strokeWidth={1} />
+          </Menu.Item>
           <SubMenu title={<Avatar src="/static/images/avatar.jpg" />}>
             
             <Menu.Item>Profile</Menu.Item>

@@ -3,9 +3,9 @@ import { Card, Divider } from 'antd';
 import { Table, Input, Button, Icon ,Message} from 'antd';
 import { useRouter } from "next/router";
 import { withRouter } from 'next/router';
-import {getCustomerList,deleteCustomer} from '../config/appServices';
+import {getStaffingList,deleteCandidate,getStaffingListwithCust} from '../config/appServices';
 import Link from 'next/link';
-import Router from 'next/router';
+import moment from "moment";
 
 class App extends React.Component { 
   constructor(props) {
@@ -14,22 +14,25 @@ class App extends React.Component {
       searchText: '',
       currentState: "not-panic",
        selectedRowKeys: [],
-       candData:[]
+       candData:[],
+       todayDate:moment().format("YYYY-DD-MM"),
     }
    
   }
 
  componentDidMount () {
-    this.getCustomer();
+   console.log('CUSTOMERR ID IS'+this.props.router.query.id );
+   this.getCandidate();
   }
 
-  getCustomer=async()=>{
-    const data = await getCustomerList()
+  getCandidate=async()=>{
+    const data = await getStaffingListwithCust()
     .then(result=>{
+    //  console.log(result.data);
      if(result.message=='SUCCESS'){
-     console.log(result.data.customer_dtls);
+     console.log(result.data.staffing_details);
        this.setState({
-        candData:result.data.customer_dtls
+        candData:result.data.staffing_details
        })
       
      }
@@ -39,16 +42,16 @@ class App extends React.Component {
   }
 
 getIssue=async(val)=>{
-     const data = await deleteCustomer({custId:val})
+     const data = await deleteCandidate({candId:val})
     .then(result=>{
       console.log(result);
       if(result.message=='SUCCESS'){
       
        Message.success(
-                'Customer Data deleted sucessfully...!'
+                'Staffing Data deleted sucessfully...!'
               ).then(() => 
             console.log('success'),
-            this.getCustomer(),
+            this.getCandidate(),
             // Router.push('/candidate/candidateList')
              );
     }
@@ -75,22 +78,40 @@ getIssue=async(val)=>{
     this.setState({ selectedRowKeys });
   };
 
-    redirect=(val)=>{
-      console.log(val);
-      Router.push(`/customer/recruit/${val}`);
-    }
+  getCan=()=>{
+   this.state.candData.map((item, i) => { 
+      return (
+          [
+              {
+                key: item.id,
+                candStatus: item.candStatus,
+                candId: item.candId,
+                custiId: item.custiId,
+                date: item.date,
+                shiftTime: item.shiftTime,
+                stafid: item.stafid,
+              }
+          ]
+       ) } );
+  };
+
+
 
   render() {
     const { selectedRowKeys } = this.state;
+    console.log(this.getCan());
      const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange
       };
-console.log(selectedRowKeys);
-    const columns = [
+
+  
+
+
+ const columns = [
       {
-        title: 'Name',
-        dataIndex: 'custName',
+        title: 'Candidate Name',
+        dataIndex: 'canFirstname',
         width: 150,
         filterDropdown: ({
           setSelectedKeys,
@@ -124,7 +145,7 @@ console.log(selectedRowKeys);
           />
         ),
         onFilter: (value, record) =>
-          record.custName.toLowerCase().includes(value.toLowerCase()),
+          record.canFirstname.toLowerCase().includes(value.toLowerCase()),
         onFilterDropdownVisibleChange: visible => {
           if (visible) {
             setTimeout(() => {
@@ -155,47 +176,91 @@ console.log(selectedRowKeys);
         }
       },
       {
-      title: "Address",
-      dataIndex: "custAddress",
+      title: "Customer Name",
+      dataIndex: "custName",
       width: 150
     },
-    
+    {
+      title: "Shift Date",
+      dataIndex: "date",
+      width: 150
+    },
+    {
+      title: "Shift Time",
+      dataIndex: "shiftTime",
+      width: 150
+    },
+    {
+      title: "Shift Status",
+      dataIndex: "candStatus",
+      width: 150,
+      render: (text, record) => {
+      if (record.candStatus==0) {
+          return (
+          <>
+          <p>Not Confirmed</p>
+          </>
+         );
+      }
+      else{
+        return (
+         <>
+          <p>Confirmed</p>
+          </>
+        );
+      }
+        
+    }
+      
+     },
       {
     title: 'Action',
     key: 'operation',
+   
     width: 150,
      render: (text, record) => (
+     moment(record.date).format("YYYY-MM-DD")==moment().format("YYYY-MM-DD")?
       <span>
-       <Link href={`/candidate/show/${record.comDtlsId }`}>
+        
+        <Link href={`/candidate/show/${record.candId}`}>
+        <a ><Icon type="eye" style={{color:'white'}}/></a>
+         </Link> 
+        <Divider type="vertical" />
+         <Link href={`/candidate/${record.candId}`}>
+        <a ><Icon type="edit" style={{color:'white'}}/></a>
+        </Link> 
+         <Divider type="vertical" />
+         <a><Icon type="delete" style={{color:'white'}} onClick={() =>this.getIssue(record.candId)}/></a> 
+         </span>
+         :
+         <span>
+         <Link href={`/candidate/show/${record.candId}`}>
         <a ><Icon type="eye" /></a>
          </Link> 
         <Divider type="vertical" />
-         <Link href={`/candidate/${record.comDtlsId }`}>
+         <Link href={`/candidate/${record.candId}`}>
         <a ><Icon type="edit" /></a>
         </Link> 
          <Divider type="vertical" />
-         <a><Icon type="delete" onClick={() =>this.getIssue(record.comDtlsId )}/></a> 
+         <a><Icon type="delete" onClick={() =>this.getIssue(record.candId)}/></a> 
+         
+       
       </span>
+      
     )
   }
     ];
+
+     
+
+
     return <Table columns={columns} dataSource={this.state.candData} 
-    rowSelection={rowSelection}  rowKey={record => record.comDtlsId }  
-    className="px-3 bg-white mh-page"
-   
-    expandedRowRender={record => (
-              <>
-              <div>
-              <p>
-                {record.custdtls}
-              </p>
-              </div>
-               <Button type="primary" icon="arrow" size="large" onClick={()=>this.redirect(record.comDtlsId)}>
-                 Recruit candidates
-                </Button>
-              </>
-            )}
-     pagination= { {pageSizeOptions: ['10', '20'], pageSize: 10 ,showSizeChanger: true}}/>;
+    rowSelection={rowSelection}  rowKey={record => record.stafid}  
+    className="px-3"
+    rowClassName={(record, index) => record.candStatus == 0 ? 'table-row-light' :  'table-row-dark'}
+
+    scroll={{ x: 1500, y: 300 }}
+    pagination= { {pageSizeOptions: ['10', '20'], pageSize: 10 ,showSizeChanger: true}}/>;
   }
 }
 

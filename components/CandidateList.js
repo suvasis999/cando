@@ -1,73 +1,168 @@
+import React from 'react';
 import { Card, Divider } from 'antd';
-import { Button, Checkbox, Form, Input, Message, Row,Col,Select,Icon } from 'antd';
-import styled from 'styled-components';
-import FixedColumnsHeader from './controls/fixed-columns-header';
-import {getCandidateList} from '../config/appServices';
-import { Table } from 'antd';
-import React, { useState, useEffect } from "react";
+import { Table, Input, Button, Icon ,Message} from 'antd';
+import { useRouter } from "next/router";
+import { withRouter } from 'next/router';
+import {getCandidateList,deleteCandidate} from '../config/appServices';
 import Link from 'next/link';
-import Router from 'next/router';
-const Content = styled.div`
-  width: 100%;
-  z-index: 2;
-  min-width: 300px;
-`;
 
-function CandidateList() {
 
-const [state, setstate] = useState([]);
-  const [loading, setloading] = useState(true); 
-  useEffect(() => {
-    getData();
-  }, []);
+class App extends React.Component { 
+  constructor(props) {
+    super(props);
+    this.state = {
+      searchText: '',
+      currentState: "not-panic",
+       selectedRowKeys: [],
+       candData:[]
+    }
+   
+  }
 
-  const getData = async () => {
-     const data = await getCandidateList()
+ componentDidMount () {
+   console.log('CUSTOMERR ID IS'+this.props.router.query.id );
+   this.getCandidate();
+  }
+
+  getCandidate=async()=>{
+    const data = await getCandidateList()
     .then(result=>{
      if(result.message=='SUCCESS'){
      console.log(result.data.candidate_details);
-       setstate(
-        result.data.candidate_details.map(row => ({
-            Name: row.canSurname +' '+ row.canFirstname,
-            Email: row.Canemail,
-            Telephone:row.Cantel,
-            JobLookingFor:row.JoblookingFor,
-            Qualifation:row.Qualifation,
-            Cannationality:row.Cannationality,
-            id: row.candId
-          }))
-        );
+       this.setState({
+        candData:result.data.candidate_details
+       })
       
      }
      else{
-     
      }
-
     });
+  }
 
-   
-      }
-   
- 
- const columns = [
-    {
-      title: "Name",
-      dataIndex: "Name",
-      width: 150
-    },
-    {
+getIssue=async(val)=>{
+     const data = await deleteCandidate({candId:val})
+    .then(result=>{
+      console.log(result);
+      if(result.message=='SUCCESS'){
+      
+       Message.success(
+                'Candidate Data deleted sucessfully...!'
+              ).then(() => 
+            console.log('success'),
+            this.getCandidate(),
+            // Router.push('/candidate/candidateList')
+             );
+    }
+    else{
+      Message.success(
+                'There are some problem in Server Please try again...!'
+              )
+    }
+    })
+   }
+
+  handleSearch = (selectedKeys, confirm) => () => {
+    confirm();
+    this.setState({ searchText: selectedKeys[0] });
+  };
+
+  handleReset = clearFilters => () => {
+    clearFilters();
+    this.setState({ searchText: '' });
+  };
+
+ onSelectChange = selectedRowKeys => {
+   // console.log('selectedRowKeys changed: ', selectedRowKeys);
+    this.setState({ selectedRowKeys });
+  };
+
+  render() {
+    const { selectedRowKeys } = this.state;
+     const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectChange
+      };
+console.log(selectedRowKeys);
+    const columns = [
+      {
+        title: 'Name',
+        dataIndex: 'canFirstname',
+        width: 150,
+        filterDropdown: ({
+          setSelectedKeys,
+          selectedKeys,
+          confirm,
+          clearFilters
+        }) => (
+          <div className="custom-filter-dropdown">
+            <Input
+              ref={ele => (this.searchInput = ele)}
+              placeholder="Search name"
+              value={selectedKeys[0]}
+              onChange={e =>
+                setSelectedKeys(e.target.value ? [e.target.value] : [])
+              }
+              onPressEnter={this.handleSearch(selectedKeys, confirm)}
+            />
+            <Button
+              type="primary"
+              onClick={this.handleSearch(selectedKeys, confirm)}
+            >
+              Search
+            </Button>
+            <Button onClick={this.handleReset(clearFilters)}>Reset</Button>
+          </div>
+        ),
+        filterIcon: filtered => (
+          <Icon
+            type="smile-o"
+            style={{ color: filtered ? '#108ee9' : '#aaa' }}
+          />
+        ),
+        onFilter: (value, record) =>
+          record.canFirstname.toLowerCase().includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: visible => {
+          if (visible) {
+            setTimeout(() => {
+              this.searchInput.focus();
+            });
+          }
+        },
+        render: text => {
+          const { searchText } = this.state;
+          return searchText ? (
+            <span>
+              {text
+                .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))
+                .map(
+                  (fragment, i) =>
+                    fragment.toLowerCase() === searchText.toLowerCase() ? (
+                      <span key={i} className="highlight">
+                        {fragment}
+                      </span>
+                    ) : (
+                      fragment
+                    ) // eslint-disable-line
+                )}
+            </span>
+          ) : (
+            text
+          );
+        }
+      },
+      {
       title: "Telephone",
-      dataIndex: "Telephone",
+      dataIndex: "Cantel",
       width: 150
     },
     {
       title: "Email",
-      dataIndex: "Email",
+      dataIndex: "Canemail",
       width: 150
     },
     {
       title: "Job Looking For",
-      dataIndex: "JobLookingFor",
+      dataIndex: "JoblookingFor",
       width: 150
     },
     {
@@ -80,59 +175,39 @@ const [state, setstate] = useState([]);
       dataIndex: "Cannationality",
       width: 150
     },
-     {
+      {
     title: 'Action',
     key: 'operation',
     fixed: 'right',
     width: 150,
      render: (text, record) => (
       <span>
-       <Link href={`/question/${record.id}`}> 
+       <Link href={`/question/${record.candId}`}> 
       <a ><Icon type="question" /></a> 
       </Link>  
         <Divider type="vertical" />
-
-        <a href="javascript:;"><Icon type="eye" /></a>
+        <Link href={`/candidate/show/${record.candId}`}>
+        <a ><Icon type="eye" /></a>
+         </Link> 
         <Divider type="vertical" />
-        <a href="javascript:;"><Icon type="edit" /></a> 
+         <Link href={`/candidate/${record.candId}`}>
+        <a ><Icon type="edit" /></a>
+        </Link> 
          <Divider type="vertical" />
-        <a href="javascript:;"><Icon type="delete" /></a> 
+         <a><Icon type="delete" onClick={() =>this.getIssue(record.candId)}/></a> 
       </span>
     )
   }
-
-  ];
-
-
-    return (
-      <div>
-  <Row
-    align="left"
-    className="px-3 bg-white mh-page" 
-    style={{ minHeight: '100vh' }} 
-  >
-    <Content>
-      <Card bodyStyle={{ padding: 0 }} id="components-button-demo">
-       
-
-        <Divider orientation="left">
-          <small>Candidate List</small>
-        </Divider>
-        <div className="p-4">
-            <Table columns={columns} dataSource={state} scroll={{ x: 1500, y: 300 }}
-            expandedRowRender={record => (
-              <p style={{ margin: 0 }}>{record.Name}</p>
+    ];
+    return <Table columns={columns} dataSource={this.state.candData} 
+    rowSelection={rowSelection}  rowKey={record => record.candId}  
+    className="px-3 bg-white mh-page"
+    scroll={{ x: 1500, y: 300 }}
+    expandedRowRender={record => (
+              <p style={{ margin: 0 }}>{record.canTitle} {record.canFirstname} {record.canSurname}</p>
             )}
-             />
-
-        </div>
-
-       
-      </Card>
-      </Content>
-      </Row></div>
-    );
- 
+     pagination= { {pageSizeOptions: ['10', '20'], pageSize: 10 ,showSizeChanger: true}}/>;
+  }
 }
 
-export default CandidateList;
+export default withRouter(App); 

@@ -1830,6 +1830,27 @@ const GlobalStyles = createGlobalStyle`
   .am-weather-cloud-2 > path, [id^=cloudy-day-] > path {
     stroke-width: 0;
   }
+ .ant-steps-item-title {
+    position: relative;
+    display: inline-block;
+    padding-right: 16px;
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 13px;
+    line-height: 32px;
+}
+
+.table-row-light {
+    background-color: #ffffff;
+}
+.table-row-dark {
+    background-color: #036f0b;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+ .ant-table-tbody > tr:hover:not(.ant-table-expanded-row) > td {
+    background: transparent;
+}
 `;
 
 export { GlobalStyles, theme };
