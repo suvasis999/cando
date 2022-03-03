@@ -148,6 +148,38 @@ return result;
  };
 
 
+ export const deleteStaffingDetails = async(values) => {
+ 	 let result = {};
+	const url=''+localhost+'staffing_dtls/delete';
+	const getData= await fetch(url, {
+		  "method": "POST",
+		   headers: {
+                'Accept': 'application/json',
+                "X-Api-Key":API_KEY,
+             },
+		  "body": JSON.stringify(
+		    values
+		  )
+		})
+		.then(resp => resp.json())
+		.then(Response => {
+			console.log(Response);
+            	if(Response.status==false){
+            		result.message = 'Your request could not be processed. Please try again, and if the problem persists, contact our support Team.'; 
+	      			result.success = false;
+            	}
+            	else{
+            		result.message = 'SUCCESS'; 
+	      			result.success = true;
+	      			result.data = Response.data;
+	      			
+            	}
+
+            });
+return result; 
+ };
+
+
 
  export const getCandidatedetails = async(values) => { 
 let result = {};

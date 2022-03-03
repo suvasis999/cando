@@ -3,7 +3,7 @@ import { Card, Divider } from 'antd';
 import { Table, Input, Button, Icon ,Message} from 'antd';
 import { useRouter } from "next/router";
 import { withRouter } from 'next/router';
-import {getStaffingList,deleteCandidate,getStaffingListwithCust} from '../config/appServices';
+import {getStaffingList,deleteCandidate,getStaffingListwithCust,deleteStaffingDetails} from '../config/appServices';
 import Link from 'next/link';
 import moment from "moment";
 
@@ -28,7 +28,7 @@ class App extends React.Component {
   getCandidate=async()=>{
     const data = await getStaffingListwithCust()
     .then(result=>{
-    //  console.log(result.data);
+    console.log(result.data.staffing_details);
      if(result.message=='SUCCESS'){
      console.log(result.data.staffing_details);
        this.setState({
@@ -42,7 +42,7 @@ class App extends React.Component {
   }
 
 getIssue=async(val)=>{
-     const data = await deleteCandidate({candId:val})
+     const data = await deleteStaffingDetails({candId:val})
     .then(result=>{
       console.log(result);
       if(result.message=='SUCCESS'){
@@ -222,27 +222,27 @@ getIssue=async(val)=>{
      moment(record.date).format("YYYY-MM-DD")==moment().format("YYYY-MM-DD")?
       <span>
         
-        <Link href={`/candidate/show/${record.candId}`}>
+        <Link href={`/staffing/staffing/${record.stafid}`}>
         <a ><Icon type="eye" style={{color:'white'}}/></a>
          </Link> 
         <Divider type="vertical" />
-         <Link href={`/candidate/${record.candId}`}>
+         <Link href={`/staffing/${record.stafid}`}>
         <a ><Icon type="edit" style={{color:'white'}}/></a>
         </Link> 
          <Divider type="vertical" />
-         <a><Icon type="delete" style={{color:'white'}} onClick={() =>this.getIssue(record.candId)}/></a> 
+         <a><Icon type="delete" style={{color:'white'}} onClick={() =>this.getIssue(record.stafid)}/></a> 
          </span>
          :
          <span>
-         <Link href={`/candidate/show/${record.candId}`}>
+         <Link href={`/staffing/staffing/${record.stafid}`}>
         <a ><Icon type="eye" /></a>
          </Link> 
         <Divider type="vertical" />
-         <Link href={`/candidate/${record.candId}`}>
+         <Link href={`/staffing/${record.stafid}`}>
         <a ><Icon type="edit" /></a>
         </Link> 
          <Divider type="vertical" />
-         <a><Icon type="delete" onClick={() =>this.getIssue(record.candId)}/></a> 
+         <a><Icon type="delete" onClick={() =>this.getIssue(record.stafid)}/></a> 
          
        
       </span>
@@ -259,7 +259,7 @@ getIssue=async(val)=>{
     className="px-3"
     rowClassName={(record, index) => record.candStatus == 0 ? 'table-row-light' :  'table-row-dark'}
 
-    scroll={{ x: 1500, y: 300 }}
+    scroll={{ x: 1500, y: 600 }}
     pagination= { {pageSizeOptions: ['10', '20'], pageSize: 10 ,showSizeChanger: true}}/>;
   }
 }
