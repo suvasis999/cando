@@ -28,9 +28,9 @@ class App extends React.Component {
   getCandidate=async()=>{
     const data = await getStaffingListwithCust()
     .then(result=>{
-    console.log(result.data.staffing_details);
+   // console.log(result.data.staffing_details);
      if(result.message=='SUCCESS'){
-     console.log(result.data.staffing_details);
+    // console.log(result.data.staffing_details);
        this.setState({
         candData:result.data.staffing_details
        })
