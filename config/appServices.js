@@ -86,9 +86,37 @@ return result;
  };
 
 
+ export const getStaffingListwithCustDetails = async(values) => { 
+let result = {};
+const url=''+localhost+'staffing_dtls/getDetails?X-Api-Key='+API_KEY+'&staffId='+values;;
+const getData= await fetch(url, { 
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                "X-Api-Key":API_KEY,
+                
+            }
+            }).then(resp => resp.json())
+            .then(Response => {
+            	if(Response.status==false){
+            		result.message = 'Your request could not be processed. Please try again, and if the problem persists, contact our support Team.'; 
+	      			result.success = false;
+            	}
+            	else{
+            		result.message = 'SUCCESS'; 
+	      			result.success = true;
+	      			result.data = Response.data;
+            	}
+
+            });
+return result; 
+ };
+
+
  export const getCandidateListwithShift = async() => { 
 let result = {};
 const url=''+localhost+'candidate_details/getVariantList?X-Api-Key='+API_KEY+'';
+console.log(url);
 const getData= await fetch(url, { 
             method: 'GET',
             headers: {
@@ -487,6 +515,7 @@ return result;
 
 
  export const addShiftDetails = async(values) => {
+
  	 let result = {};
 	const url=''+localhost+'staffing_dtls/add';
 	const getData= await fetch(url, {
@@ -522,6 +551,44 @@ return result;
 return result; 
  };
 
+
+
+export const addShiftDetailsArray = async(values) => {
+ 	
+ 	 let result = {};
+	const url=''+localhost+'staffing_dtls/addArray';
+	const getData= await fetch(url, {
+		  "method": "POST",
+		   headers: {
+                'Accept': 'application/json',
+                "X-Api-Key":API_KEY,
+             },
+		  "body": JSON.stringify(
+		    values
+		  )
+		})
+		.then(resp => resp.json())
+		.then(Response => {
+				console.log(Response);
+            	if(Response.status==false){
+            		result.message = 'Your request could not be processed. Please try again, and if the problem persists, contact our support Team.'; 
+	      			result.success = false;
+            	}
+            	else if(Response.status==true){
+            		result.message = 'SUCCESS'; 
+	      			result.success = true;
+	      			result.data = Response.data;
+	      			
+            	}
+            	else{
+            		result.message = 'BUSY'; 
+	      			result.success = true;
+	      			result.data = Response.data;
+            	}
+
+            });
+return result; 
+ };
 
 export const deleteCandidate = async(values) => {
  	 let result = {};
@@ -619,7 +686,7 @@ return result;
  };
 
  export const editCustomerDetails = async(values) => {
- 	 let result = {};
+ 	let result = {};
 	const url=''+localhost+'customer_dtls/update';
 	const getData= await fetch(url, {
 		  "method": "POST",
@@ -649,6 +716,41 @@ return result;
             });
 return result; 
  };
+
+
+ export const editShiftingDetails = async(values) => {
+ 	let result = {};
+	const url=''+localhost+'staffing_dtls/update';
+	const getData= await fetch(url, {
+		  "method": "POST",
+		   headers: {
+                'Accept': 'application/json',
+                "X-Api-Key":API_KEY,
+             },
+		  "body": JSON.stringify(
+		    values
+		  )
+		})
+		.then(resp => resp.json())
+		.then(Response => {
+			console.log(Response);
+            	if(Response.status==false){
+            		result.message = 'Your request could not be processed. Please try again, and if the problem persists, contact our support Team.'; 
+	      			result.success = false;
+	      			result.val=values;
+            	}
+            	else{
+            		result.message = 'SUCCESS'; 
+	      			result.success = true;
+	      			result.data = Response.data;
+	      			result.uid=Response.regUserId
+            	}
+
+            });
+return result; 
+ };
+
+
 
  export const addCandidateEmp = async(values) => {
  	 let result = {};

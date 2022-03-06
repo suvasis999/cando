@@ -21,11 +21,6 @@ const renderTabBar = (props, DefaultTabBar) => (
 
 const Demo = () => { 
   const [candtls, setcandtls] = useState([]);
-  const [canempdtls, setcanempdtls] = useState([]);
-  const [canempavaildtls, setcanempavaildtls] = useState([]);
-  const [canworkdtls, setcanworkdtls] = useState([]);
-  const [canemcondtls, setcanemcondtls] = useState([]);
-  const [canacdtls, setcanacdtls] = useState([]);
   const router = useRouter();
   const TabPane = Tabs.TabPane;
 

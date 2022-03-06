@@ -4,7 +4,7 @@ import { Table, Input, Button, Icon,Card,Modal, Form as Component ,DatePicker,Se
 import { useRouter } from "next/router";
 import { withRouter } from 'next/router';
 import {getCandidateList,getCustomerdetails,addShiftDetails,getCandidateShiftDetails,
-  getCandidateListwithShift} from '../../../config/appServices';
+  getCandidateListwithShift,addShiftDetailsArray} from '../../../config/appServices';
 import moment from "moment";
 import ReactDOM from "react-dom";
 import Router from 'next/router';
@@ -45,13 +45,48 @@ class App extends React.Component {
     });
   };
 
+  handlemultiple=async()=>{
+     const {shiftDate,shiftTime,candId,selectedRowKeys}=this.state;
+     this.setState({ loading: true }); 
+   
+     const data = await addShiftDetailsArray({candId:candId,
+      custiId:this.props.router.query.id,
+      shiftTime:shiftTime,date:shiftDate,candGroup:selectedRowKeys})
+    .then(result=>{
+      console.log(result);
+     if(result.message=='SUCCESS'){
+      Message.success(
+        'Shifting Details stored sucessfully...!'
+     )
+     this.setState({ loading: false }); 
+       this.setState({ visible: false });
+       this.setState({formKey: (this.state.formKey || 0) + 1})
+       this.getCandidate();
+      
+     }
+     else if(result.message=='BUSY'){
+           Message.success(
+        'Candidate not avilable for this shift please chage shift details'
+     )
+           
+       this.setState({ loading: false }); 
+       this.setState({ visible: false });
+       this.setState({formKey: (this.state.formKey || 0) + 1})
+       this.getCandidate();
+        }
+        else{
+
+        }
+    });
+  }
+
   handleOk = async() => {
-    const {shiftDate,shiftTime,candId}=this.state;
+    const {shiftDate,shiftTime,candId,selectedRowKeys}=this.state;
     this.setState({ loading: true }); 
    
      const data = await addShiftDetails({candId:candId,
       custiId:this.props.router.query.id,
-      shiftTime:shiftTime,date:shiftDate})
+      shiftTime:shiftTime,date:shiftDate,candGroup:selectedRowKeys})
     .then(result=>{
      if(result.message=='SUCCESS'){
       Message.success(
@@ -124,15 +159,19 @@ class App extends React.Component {
   };
 
  onSelectChange = selectedRowKeys => {
-   console.log('selectedRowKeys changed: ', selectedRowKeys);
+   //console.log('selectedRowKeys changed: ', selectedRowKeys);
     this.setState({ selectedRowKeys });
   };
 
   recruitCand=(val)=>{
-    console.log(val);
+    
     this.setState({
       candId:val
     })
+    this.showModal();
+  }
+
+  recruitCandall=()=>{
     this.showModal();
   }
 
@@ -275,29 +314,45 @@ console.log(selectedRowKeys);
     key: 'operation',
     width: 150,
      render: (text, record) => {
-      if (record&&record.staffingDetails&&record.staffingDetails.length>0) {
+      if(record.staffingDetails && record.staffingDetails.length>0){
+      if (moment(record.shiftDatae).format("YYYY-MM-DD") == moment().format("YYYY-MM-DD")) {
           return (
           <>
-          <Button type="default" style={{ background: "#ff9900", borderColor: "yellow",color:'white' }} 
-           onClick={()=>this.redirect(record.candId)}>
-            Recruit Details
-         </Button>
-         <Button type="primary" onClick={() =>this.recruitCand(record.candId)}>
-          Recruit
+         
+         <Button type="primary" style={{ background: "#ff9900", borderColor: "yellow",color:'white' }}
+         >
+          Booked
         </Button>
         </>
          );
       }
       else{
         return (
-        <Button type="primary" onClick={() =>this.recruitCand(record.candId)}>
-          Recruit
-        </Button>
+        <>
+         <Button type="primary"  onClick={this.recruitCandall}
+
+         >
+            Recruit
+         </Button>
+         </>
         );
       }
+    }
+    else{
+      return (
+        <>
+         <Button type="primary"  onClick={this.recruitCandall}
+
+         >
+            Recruit
+         </Button>
+         </>
+        );
+
+    }
         
     }
-  }
+  },
     ]; 
 
      return (
@@ -311,13 +366,13 @@ console.log(selectedRowKeys);
        <Modal
           visible={visible}
           title="Staffing Details"
-          onOk={this.handleOk}
+          onOk={this.handlemultiple}
           onCancel={this.handleCancel}
           footer={[
             <Button key="back" onClick={this.handleCancel}>
               Dismiss
             </Button>,
-            <Button key="submit" loading={loading} onClick={this.handleOk}>
+            <Button key="submit" loading={loading} onClick={this.handlemultiple}>
               Submit
             </Button>
           ]} 
@@ -326,6 +381,11 @@ console.log(selectedRowKeys);
           <p><b>Customer Name</b> :{this.state.custData.custName}</p>
            <Component.Item label='Shift Date'>
             <DatePicker   
+            disabledDate={(current) => {
+              let customDate = moment().format("YYYY-MM-DD");
+              return current && current < moment(customDate, "YYYY-MM-DD");
+            }} 
+            
             onChange={(value) => {
               this.setState({
                 shiftDate:moment(value).format("YYYY-MM-DD")
@@ -379,8 +439,8 @@ console.log(selectedRowKeys);
               <p>Details : {custData.custdtls}</p>
             </Card>
           </div>
-           <div className="px-3 bg-white pull-right pb-5" style={{float:'right'}}>
-            <Button type="primary"> Recruit candidates</Button>
+           <div className="px-3 bg-white pb-5" >
+            <Button type="primary" onClick={this.recruitCandall}> Recruit candidates</Button>
            </div>
         </div> 
       
@@ -394,13 +454,34 @@ console.log(selectedRowKeys);
     })}
     className="px-3 bg-white mh-page"
     expandedRowRender={record => (
+      record.staffingDetails && record.staffingDetails.length>0?
+      <>
+        <p><b>Todays Booking Status</b></p>
+       <p style={{ margin: 0 }}> Hi <b>{record.canTitle}  {record.canFirstname} {record.canSurname} </b></p>
+        {moment(record.shiftDatae).format("YYYY-MM-DD") == moment().format("YYYY-MM-DD")
+        ? 
+       <div>Your bookng status is 
+       Booking date :<b>{moment().format("YYYY-MM-DD")} </b>
+        <b>
+         {
+           record.candStatus==0  ? ' Not Confirmed ':' Confirmed'
+         }
+         </b>
 
-       <p style={{ margin: 0 }}>{record.canTitle} {record.canFirstname} {record.canSurname}</p>
+       </div>
+       :''}
+        </>
+        :
+        <>
+        <p style={{ margin: 0 }}> Hi <b>{record.canTitle}  {record.canFirstname} {record.canSurname} </b></p>
+        <p>No record found</p>
+        </>
+      
     )}
      pagination= { {pageSizeOptions: ['10', '20'], pageSize: 10 ,showSizeChanger: true}}/>
      <div className="bg-white" style={{width: '100%',float: 'left'}}>
        <div className="px-3 bg-white pull-right pb-5 pt-2" style={{float:'right'}}>
-              <Button type="primary"> Recruit candidates</Button>
+         <Button type="primary" onClick={this.recruitCandall}> Recruit candidates</Button>
        </div>
     </div>
 

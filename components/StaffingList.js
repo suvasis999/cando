@@ -28,9 +28,9 @@ class App extends React.Component {
   getCandidate=async()=>{
     const data = await getStaffingListwithCust()
     .then(result=>{
-   // console.log(result.data.staffing_details);
+  
      if(result.message=='SUCCESS'){
-    // console.log(result.data.staffing_details);
+     console.log(result.data.staffing_details);
        this.setState({
         candData:result.data.staffing_details
        })
@@ -222,21 +222,17 @@ getIssue=async(val)=>{
      moment(record.date).format("YYYY-MM-DD")==moment().format("YYYY-MM-DD")?
       <span>
         
-        <Link href={`/staffing/staffing/${record.stafid}`}>
-        <a ><Icon type="eye" style={{color:'white'}}/></a>
-         </Link> 
+        
         <Divider type="vertical" />
          <Link href={`/staffing/${record.stafid}`}>
-        <a ><Icon type="edit" style={{color:'white'}}/></a>
+        <a ><Icon type="edit" /></a>
         </Link> 
          <Divider type="vertical" />
-         <a><Icon type="delete" style={{color:'white'}} onClick={() =>this.getIssue(record.stafid)}/></a> 
+         <a><Icon type="delete"  onClick={() =>this.getIssue(record.stafid)}/></a> 
          </span>
          :
          <span>
-         <Link href={`/staffing/staffing/${record.stafid}`}>
-        <a ><Icon type="eye" /></a>
-         </Link> 
+        
         <Divider type="vertical" />
          <Link href={`/staffing/${record.stafid}`}>
         <a ><Icon type="edit" /></a>
@@ -258,7 +254,15 @@ getIssue=async(val)=>{
     rowSelection={rowSelection}  rowKey={record => record.stafid}  
     className="px-3"
     rowClassName={(record, index) => record.candStatus == 0 ? 'table-row-light' :  'table-row-dark'}
-
+    expandedRowRender={record => (
+              <p style={{ margin: 0 }}>
+   
+    Hi {record.canFirstname} {record.canSurname} your shifing details is  <b>Date: {record.date}</b> Shifting Time is <b>{record.shiftTime} </b>
+      at <b>{record.custName} </b>
+      Address is <b>{record.custAddress}</b>
+      
+    </p>
+            )}
     scroll={{ x: 1500, y: 600 }}
     pagination= { {pageSizeOptions: ['10', '20'], pageSize: 10 ,showSizeChanger: true}}/>;
   }

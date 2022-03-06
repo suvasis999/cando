@@ -166,11 +166,11 @@ console.log(selectedRowKeys);
     width: 150,
      render: (text, record) => (
       <span>
-       <Link href={`/candidate/show/${record.comDtlsId }`}>
+       <Link href={`/customer/show/${record.comDtlsId }`}>
         <a ><Icon type="eye" /></a>
          </Link> 
         <Divider type="vertical" />
-         <Link href={`/candidate/${record.comDtlsId }`}>
+         <Link href={`/customer/${record.comDtlsId }`}>
         <a ><Icon type="edit" /></a>
         </Link> 
          <Divider type="vertical" />
@@ -186,9 +186,7 @@ console.log(selectedRowKeys);
     expandedRowRender={record => (
               <>
               <div>
-              <p>
-                {record.custdtls}
-              </p>
+             
               </div>
                <Button type="primary" icon="arrow" size="large" onClick={()=>this.redirect(record.comDtlsId)}>
                  Recruit candidates

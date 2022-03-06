@@ -1,6 +1,6 @@
-import { Container, Inner } from './styles/Page';
+import { Container, Inner } from './styles/Page'; 
 import { Layout, Spin } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'; 
 
 import Header from './Header'; 
 import SidebarMenu from './SidebarMenu';
@@ -27,10 +27,10 @@ const Page = ({ router, children }) => {
   const isNotDashboard = NonDashboardRoutes.includes(router.pathname);
   const logStatus = useSelector(state => state.main);
   //const uname=localStorage.getItem('U_NAME');  
-  const uname=typeof window !== 'undefined' ? localStorage.getItem('U_NAME') : null;//localStorage.getItem('U_NAME');
+ const uname=typeof window !== 'undefined' ? localStorage.getItem('U_NAME') : null;//localStorage.getItem('U_NAME');
 
   useEffect(() => {
-   
+ console.log(logStatus);
   setTimeout(() => {
       setLoading(false);
     }, 1000);
@@ -46,7 +46,7 @@ const Page = ({ router, children }) => {
           }`}
         >
          
-          <Layout className="workspace"> 
+          <Layout className="workspace" > 
             
 
             <Layout>
@@ -61,11 +61,11 @@ const Page = ({ router, children }) => {
       )
       :(
     <Spin tip="Loading..." size="large" spinning={loading}>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={theme}> 
         <Container
         >
           {!isNotDashboard && <Header />}
-          <Layout className="workspace" style={{width:'100%'}}>
+          <Layout className="workspace" >
             {!isNotDashboard && (
               <SidebarMenu
                 sidebarTheme={state.darkSidebar ? 'dark' : 'light'}
@@ -76,9 +76,9 @@ const Page = ({ router, children }) => {
             )}
 
             <Layout>
-              <Content>
+              <div>
                 {!isNotDashboard ? <Inner>{children}</Inner> : children}
-              </Content>
+              </div>
             </Layout>
           </Layout>
         </Container>
