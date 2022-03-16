@@ -25,7 +25,9 @@ class App extends React.Component {
        shiftTime:'' ,
        candId:'',
        formKey:'',
-       stafData:[]
+       stafData:[],
+       mobNoGroup:'',
+       city:[]
     }
    
   }
@@ -219,6 +221,7 @@ class App extends React.Component {
   selectRow = record => {
   console.log(record.candId);
   this.getDetailsStaffing(record.candId);
+ 
   const selectedRowKeys = [...this.state.selectedRowKeys];
   if (selectedRowKeys.indexOf(record.candId) >= 0) {
     selectedRowKeys.splice(selectedRowKeys.indexOf(record.candId), 1);
@@ -226,9 +229,21 @@ class App extends React.Component {
     selectedRowKeys.push(record.candId);
   }
   this.setState({ selectedRowKeys });
+
+
+  const mobNoGroup = [...this.state.mobNoGroup];
+  if (mobNoGroup.indexOf(record.Cantel) >= 0) {
+    mobNoGroup.splice(mobNoGroup.indexOf(record.Cantel), 1);
+  } else {
+    mobNoGroup.push(record.Cantel);
+  }
+  this.setState({ mobNoGroup });
+
+
 }
 
   render() {
+    console.log(this.state.mobNoGroup);
     const { selectedRowKeys,custData,visible, loading } = this.state;
      const rowSelection = {
       selectedRowKeys,
@@ -385,7 +400,7 @@ console.log(selectedRowKeys);
               let customDate = moment().format("YYYY-MM-DD");
               return current && current < moment(customDate, "YYYY-MM-DD");
             }} 
-            
+
             onChange={(value) => {
               this.setState({
                 shiftDate:moment(value).format("YYYY-MM-DD")
@@ -412,7 +427,7 @@ console.log(selectedRowKeys);
               })
             }} 
           >
-            <Option value='12:00 AM'>12:00 AM</Option>
+            <Option value='12:00AM'>12:00 AM</Option>
             <Option value='2:00 AM'>2:00 AM</Option>
             <Option value='4:00 AM'>4:00 AM</Option>
             <Option value='6:00 AM'>6:00 AM</Option>

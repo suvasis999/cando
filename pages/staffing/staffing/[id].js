@@ -50,7 +50,7 @@ async function getCustomerDtls(){
         <Divider orientation="left">
           <small>Staffing Details</small>
         </Divider>
-        <div className="p-4">
+        <div className="p-4"> 
 
 
         	<StickyContainer>

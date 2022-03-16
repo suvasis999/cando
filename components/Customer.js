@@ -126,7 +126,7 @@ return(
             {form.getFieldDecorator('custdetails', {
               rules: [
                 {
-                  required: true,
+                  required: false,
                   message: 'Input something!'
                 }
               ]

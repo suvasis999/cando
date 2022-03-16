@@ -11,7 +11,7 @@ import Textarea from './controls/textarea';
 import Basic from './controls/basic';
 import multiple from './controls/multiple';
 import {getCandidateList,addCandidate,addCandidateEmp,candAvail,candWorkexp,
-candEmergencyCont,candAccountDtls,} 
+candEmergencyCont,candAccountDtls,getCityArr} 
 from '../config/appServices';
 const { Step } = Steps;
 const { Item } = Form;
@@ -27,24 +27,39 @@ const Content = styled.div`
 
 
 const Candidate = ({ form }) => { 
-const [data, setData] = React.useState([]); 
+const [data, setData] = React.useState([]);  
 const [uid, setUid] = React.useState([]);
 const [address, setAddress] = React.useState('');
 const [dtls, setDtls] = React.useState('');
- const [current, setCurrent] = React.useState(0);
+const [current, setCurrent] = React.useState(0);
+const [city,setCity]=React.useState([]);
 const dispatch=useDispatch();
  
 
 useEffect(() => {
+ getCiity()
  }, []);
 
+
+ async function getCiity(){
+    const data = await getCityArr()
+    .then(result=>{
+      if(result.message=='SUCCESS'){
+        console.log(result.data.city_detailss);
+       setCity(result.data.city_detailss)
+        }
+
+      })
+  }
 
 
 async function addCand(values){
 
   const cSignup = await addCandidate({canTitle:values.Title,
-    canSurname:values.Surname,
+      canSurname:values.Surname,
       canFirstname:values.FirstName,canCuraddress:values.address,
+      canAddresstwo:values.addressTwo,city:values.city,
+      pickuploc:pickloc,
       CantypeOfproofadd:0,Cantel:values.tel,
       Canemail:values.email,CanNino:values.Ni,Cannationality:values.Nationality,
       CanDl:values.dl,CanDlfile:0,
@@ -299,20 +314,64 @@ return(
              <Input placeholder="Enter Address" /> 
           )}
         </FormItem>
+
+        <FormItem label="Address Two">
+          {form.getFieldDecorator('addressTwo', {
+            rules: [
+             
+              {
+                required: false,
+                message: 'Please  Address Two!' 
+              }
+            ]
+          })(
+             <Input placeholder="Enter Address Two" /> 
+          )}
+        </FormItem>
+
+        <FormItem label="Pickup Location">
+          {form.getFieldDecorator('pickloc', {
+            rules: [
+             
+              {
+                required: false,
+                message: 'Please  Enter Pickup Location!'
+              }
+            ]
+          })(
+             <Input placeholder="Enter Pickup Location" /> 
+          )}
+        </FormItem>
+
       <Row gutter={24}>
-        {/*<Col span={8} style={{ display: 'block'}}>
-          <FormItem label='Address Proof'>
-            {form.getFieldDecorator('AddressProof', {
+        <Col span={8} style={{ display: 'block'}}>
+          
+          <FormItem label='City'>
+            {form.getFieldDecorator('city', {
               rules: [
                 {
                   required: true,
-                  message: 'Upload Address Proof!'
+                  message: 'Input something!'
                 }
               ]
-            })(<Basic />)}
+            })(<Select
+              showSearch
+              optionFilterProp="children"
+             
+              filterOption={(input, option) =>  
+                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0 
+                || option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            >
+          {city.map((item) => (
+             <Option value={item.cityId}>{item.cityname}</Option>
+          ))}
+           
+            
+          </Select>)}
           </FormItem>
-        </Col>*/}
-        <Col span={12} style={{ display: 'block'}}>
+        </Col>
+        <Col span={8} style={{ display: 'block'}}>
           <FormItem label='Telephone'>
             {form.getFieldDecorator('tel', {
               rules: [
@@ -324,7 +383,7 @@ return(
             })(<Input placeholder="placeholder" />)}
           </FormItem>
         </Col>
-        <Col span={12} style={{ display: 'block'}}>
+        <Col span={8} style={{ display: 'block'}}>
           <FormItem label="Email">
           {form.getFieldDecorator('email', {
             rules: [

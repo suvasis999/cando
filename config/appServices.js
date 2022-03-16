@@ -317,6 +317,187 @@ const getData= await fetch(url, {
 return result; 
   
  };
+
+ 
+
+ export const getCityArr = async(values) => { 
+let result = {};
+const url=''+localhost+'candidate_details/allCity?X-Api-Key='+API_KEY;
+const getData= await fetch(url, { 
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                "X-Api-Key":API_KEY,
+                
+            }
+            }).then(resp => resp.json())
+            .then(Response => {
+            	if(Response.status==false){
+            		result.message = 'Your request could not be processed. Please try again, and if the problem persists, contact our support Team.'; 
+	      			result.success = false;
+            	}
+            	else{
+            		result.message = 'SUCCESS'; 
+	      			result.success = true;
+	      			result.data = Response.data;
+            	}
+
+            });
+return result; 
+  
+ };
+
+ export const getCityShiftArr = async(values) => { 
+let result = {};
+const url=''+localhost+'cityshiftmap/all?X-Api-Key='+API_KEY;
+const getData= await fetch(url, { 
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                "X-Api-Key":API_KEY,
+                
+            }
+            }).then(resp => resp.json())
+            .then(Response => {
+            	if(Response.status==false){
+            		result.message = 'Your request could not be processed. Please try again, and if the problem persists, contact our support Team.'; 
+	      			result.success = false;
+            	}
+            	else{
+            		result.message = 'SUCCESS'; 
+	      			result.success = true;
+	      			result.data = Response.data;
+            	}
+
+            });
+return result; 
+  
+ };
+
+ export const deletecityShift = async(values) => {
+ 	 let result = {};
+	const url=''+localhost+'cityshiftmap/delete';
+	const getData= await fetch(url, {
+		  "method": "POST",
+		   headers: {
+                'Accept': 'application/json',
+                "X-Api-Key":API_KEY,
+             },
+		  "body": JSON.stringify(
+		    values
+		  )
+		})
+		.then(resp => resp.json())
+		.then(Response => {
+
+            	if(Response.status==false){
+            		result.message = 'Your request could not be processed. Please try again, and if the problem persists, contact our support Team.'; 
+	      			result.success = false;
+            	}
+            	else{
+            		result.message = 'SUCCESS'; 
+	      			result.success = true;
+	      			result.data = Response.data;
+	      			
+            	}
+
+            });
+return result; 
+ };
+
+ export const addshiftMapDetails = async(values) => {
+ 	 let result = {};
+	const url=''+localhost+'cityshiftmap/add';
+	const getData= await fetch(url, {
+		  "method": "POST",
+		   headers: {
+                'Accept': 'application/json',
+                "X-Api-Key":API_KEY,
+             },
+		  "body": JSON.stringify(
+		    values
+		  )
+		})
+		.then(resp => resp.json())
+		.then(Response => {
+            	if(Response.status==false){
+            		result.message = 'Your request could not be processed. Please try again, and if the problem persists, contact our support Team.'; 
+	      			result.success = false;
+            	}
+            	else{
+            		result.message = 'SUCCESSEM'; 
+	      			result.success = true;
+	      			result.data = Response.data;
+	      			
+            	}
+
+            });
+return result; 
+ };
+
+
+  export const getshiftmapdetails = async(values) => { 
+let result = {};
+const url=''+localhost+'cityshiftmap/detail?X-Api-Key='+API_KEY+'&id='+values;
+const getData= await fetch(url, { 
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                "X-Api-Key":API_KEY,
+                
+            }
+            }).then(resp => resp.json())
+            .then(Response => {
+            	if(Response.status==false){
+            		result.message = 'Your request could not be processed. Please try again, and if the problem persists, contact our support Team.'; 
+	      			result.success = false;
+            	}
+            	else{
+            		result.message = 'SUCCESS'; 
+	      			result.success = true;
+	      			result.data = Response.data;
+            	}
+
+            });
+return result; 
+  
+ };  
+
+export const editShiftMapDetails = async(values) => {
+ 	let result = {};
+	const url=''+localhost+'cityshiftmap/update';
+	const getData= await fetch(url, {
+		  "method": "POST",
+		   headers: {
+                'Accept': 'application/json',
+                "X-Api-Key":API_KEY,
+             },
+		  "body": JSON.stringify(
+		    values
+		  )
+		})
+		.then(resp => resp.json())
+		.then(Response => {
+			console.log(Response);
+            	if(Response.status==false){
+            		result.message = 'Your request could not be processed. Please try again, and if the problem persists, contact our support Team.'; 
+	      			result.success = false;
+	      			result.val=values;
+            	}
+            	else{
+            		result.message = 'SUCCESS'; 
+	      			result.success = true;
+	      			result.data = Response.data;
+	      			result.uid=Response.regUserId
+            	}
+
+            });
+return result; 
+ };
+
+
+
+
  export const getCandidateemployerdetails = async(values) => { 
 let result = {};
 const url=''+localhost+'cand_employe_dtls/detail?X-Api-Key='+API_KEY+'&canId='+values;
@@ -452,6 +633,8 @@ const getData= await fetch(url, {
 return result; 
   
  };
+
+
 
 
  export const getCustomerList = async() => { 
@@ -620,6 +803,8 @@ export const deleteCandidate = async(values) => {
             });
 return result; 
  };
+
+
  
 export const deleteCustomer = async(values) => {
  	 let result = {};
@@ -749,6 +934,8 @@ return result;
             });
 return result; 
  };
+
+
 
 
 

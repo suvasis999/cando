@@ -13,7 +13,7 @@ import multiple from '../../components/controls/multiple';
 import {getCandidateList,editCandidate,editCandidateEmp,candeditAvail,candeditWorkexp,
 candeditEmergencyCont,candeditAccountDtls,getCandidatedetails,getCandidateemployerdetails,
 getCandidateavaildetails,getCandidateworddetails,getCandidateemcontact,
-getCandidateacdtls} 
+getCandidateacdtls,getCityArr} 
 from '../../config/appServices'; 
 import moment from 'moment';
 
@@ -38,15 +38,25 @@ const [dtls, setDtls] = React.useState('');
 const [current, setCurrent] = React.useState(0);
 const dispatch=useDispatch();
 const [state, setcanDtls] = useState({}); 
-
+const [city,setCity]=React.useState([]);
 const router = useRouter()
 
 
 useEffect(() => {
   getCandidate();
+   getCiity();
 }, [router]);
 
+ async function getCiity(){
+    const data = await getCityArr()
+    .then(result=>{
+      if(result.message=='SUCCESS'){
+        console.log(result.data.city_detailss);
+       setCity(result.data.city_detailss)
+        }
 
+      })
+  }
 async function getCandidate(){
    const { id} = router.query;
    const data = await getCandidatedetails(id)
@@ -57,6 +67,9 @@ async function getCandidate(){
          form.setFieldsValue({Surname: result.data.candidate_details.canSurname});
          form.setFieldsValue({FirstName: result.data.candidate_details.canFirstname});
          form.setFieldsValue({address: result.data.candidate_details.canCuraddress});
+         form.setFieldsValue({addressTwo: result.data.candidate_details.canAddresstwo});
+         form.setFieldsValue({pickloc: result.data.candidate_details.pickuploc});
+         form.setFieldsValue({city: result.data.candidate_details.city});
          form.setFieldsValue({tel: result.data.candidate_details.Cantel});
          form.setFieldsValue({email: result.data.candidate_details.Canemail});
          form.setFieldsValue({Ni: result.data.candidate_details.CanNino});
@@ -153,6 +166,8 @@ const { id} = router.query;
   const cSignup = await editCandidate({canTitle:values.Title,
       canSurname:values.Surname,
       canFirstname:values.FirstName,canCuraddress:values.address,
+      canAddresstwo:values.addressTwo,city:values.city,
+      pickuploc:values.pickloc,
       CantypeOfproofadd:0,Cantel:values.tel,
       Canemail:values.email,CanNino:values.Ni,Cannationality:values.Nationality,
       CanDl:values.dl,CanDlfile:0,
@@ -439,20 +454,60 @@ return(
              <Input placeholder="Enter Address" /> 
           )}
         </FormItem>
+        <FormItem label="Address Two">
+          {form.getFieldDecorator('addressTwo', {
+            rules: [
+             
+              {
+                required: false,
+                message: 'Please  Address Two!' 
+              }
+            ]
+          })(
+             <Input placeholder="Enter Address Two" /> 
+          )}
+        </FormItem>
+        <FormItem label="Pickup Location">
+          {form.getFieldDecorator('pickloc', {
+            rules: [
+             
+              {
+                required: false,
+                message: 'Please  Enter Pickup Location!'
+              }
+            ]
+          })(
+             <Input placeholder="Enter Pickup Location" /> 
+          )}
+        </FormItem>
       <Row gutter={24}>
-        {/*<Col span={8} style={{ display: 'block'}}>
-          <FormItem label='Address Proof'>
-            {form.getFieldDecorator('AddressProof', {
+        <Col span={8} style={{ display: 'block'}}>
+          <FormItem label='City'>
+            {form.getFieldDecorator('city', {
               rules: [
                 {
                   required: true,
-                  message: 'Upload Address Proof!'
+                  message: 'Enter City!'
                 }
               ]
-            })(<Basic />)}
+            })(<Select
+              showSearch
+              optionFilterProp="children"
+             
+              filterOption={(input, option) =>  
+                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0 
+                || option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            >
+          {city.map((item) => (
+             <Option value={item.cityId}>{item.cityname}</Option>
+          ))}
+           
+            
+          </Select>)}
           </FormItem>
-        </Col>*/}
-        <Col span={12} style={{ display: 'block'}}>
+        </Col>
+        <Col span={8} style={{ display: 'block'}}>
           <FormItem label='Telephone'>
             {form.getFieldDecorator('tel', {
               rules: [
@@ -464,7 +519,7 @@ return(
             })(<Input placeholder="placeholder" />)}
           </FormItem>
         </Col>
-        <Col span={12} style={{ display: 'block'}}>
+        <Col span={8} style={{ display: 'block'}}>
           <FormItem label="Email">
           {form.getFieldDecorator('email', {
             rules: [
