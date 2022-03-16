@@ -6,7 +6,7 @@ const API_KEY='763A3733A9D7F3939FD8B585EA6A33E6';
 
 export const getCandidateList = async() => { 
 let result = {};
-const url=''+localhost+'candidate_details/all?X-Api-Key='+API_KEY+'';
+const url=''+localhost+'candidate_details/getCanlistwithCity?X-Api-Key='+API_KEY+'';
 const getData= await fetch(url, { 
             method: 'GET',
             headers: {
@@ -700,7 +700,7 @@ return result;
  export const addShiftDetails = async(values) => {
 
  	 let result = {};
-	const url=''+localhost+'staffing_dtls/add';
+	const url=''+localhost+'staffing_dtls/addArray';
 	const getData= await fetch(url, {
 		  "method": "POST",
 		   headers: {
@@ -739,7 +739,7 @@ return result;
 export const addShiftDetailsArray = async(values) => {
  	
  	 let result = {};
-	const url=''+localhost+'staffing_dtls/addArray';
+	const url=''+localhost+'staffing_dtls/sendmsgCandidate';
 	const getData= await fetch(url, {
 		  "method": "POST",
 		   headers: {

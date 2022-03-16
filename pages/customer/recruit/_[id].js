@@ -27,7 +27,6 @@ class App extends React.Component {
        formKey:'',
        stafData:[],
        mobNoGroup:[],
-       pickupTime:[],
        city:[]
     }
    
@@ -36,6 +35,7 @@ class App extends React.Component {
  
 
  componentDidMount () {
+   console.log('CUSTOMERR ID IS'+this.props.router.query.id );
    this.getCandidate();
    this.getCustomer();
    this.getCandidatewithShift();
@@ -50,7 +50,7 @@ class App extends React.Component {
   handlemultiple=async()=>{
      const {shiftDate,shiftTime,candId,selectedRowKeys}=this.state;
      this.setState({ loading: true }); 
-    
+   
      const data = await addShiftDetailsArray({candId:candId,
       custiId:this.props.router.query.id,
       shiftTime:shiftTime,date:shiftDate,candGroup:selectedRowKeys})
@@ -83,25 +83,21 @@ class App extends React.Component {
   }
 
   handleOk = async() => {
-    const {shiftDate,shiftTime,candId,selectedRowKeys,mobNoGroup,pickupTime}=this.state;
+    const {shiftDate,shiftTime,candId,selectedRowKeys,mobNoGroup}=this.state;
     this.setState({ loading: true }); 
-     this.setState({ visible: true });
-     for (var i = 0; i < selectedRowKeys.length; i++) {
-     
-     
-     const data = await addShiftDetailsArray({candId:selectedRowKeys[i],
+   
+     const data = await addShiftDetails({candId:candId,
       custiId:this.props.router.query.id,
-      shiftTime:shiftTime,date:shiftDate,candGroup:selectedRowKeys,mobNo:mobNoGroup[i],
-      pickupTime:pickupTime[i]})
+      shiftTime:shiftTime,date:shiftDate,candGroup:selectedRowKeys})
     .then(result=>{
      if(result.message=='SUCCESS'){
       Message.success(
         'Shifting Details stored sucessfully...!'
      )
-       /*this.setState({ loading: false }); 
+     this.setState({ loading: false }); 
        this.setState({ visible: false });
        this.setState({formKey: (this.state.formKey || 0) + 1})
-       this.getCandidate();*/
+       this.getCandidate();
       
      }
      else if(result.message=='BUSY'){
@@ -109,25 +105,15 @@ class App extends React.Component {
         'Candidate not avilable for this shift please chage shift details'
      )
            
-       /*this.setState({ loading: false }); 
+       this.setState({ loading: false }); 
        this.setState({ visible: false });
        this.setState({formKey: (this.state.formKey || 0) + 1})
-       this.getCandidate();*/
+       this.getCandidate();
         }
         else{
 
         }
-
-
     });
-  }
-
-      this.setState({ loading: false }); 
-       this.setState({ visible: false });
-      this.getCandidate();
-       this.setState({formKey: (this.state.formKey || 0) + 1})
-      
-    
  
   };
 
@@ -138,9 +124,9 @@ class App extends React.Component {
   getCandidate=async()=>{
     const data = await getCandidateListwithShift()
     .then(result=>{
-      console.log(result.data.candidate_details)
      if(result.message=='SUCCESS'){
-     this.setState({
+    console.log(result.data.candidate_details);
+       this.setState({
         candData:result.data.candidate_details
 
        })
@@ -154,6 +140,7 @@ class App extends React.Component {
     const data = await getCustomerdetails(this.props.router.query.id)
     .then(result=>{
       if(result.message=='SUCCESS'){
+        console.log(result.data.customer_dtls);
         this.setState({
           custData:result.data.customer_dtls
         })
@@ -195,7 +182,8 @@ class App extends React.Component {
   };
 
    redirect=(val)=>{
-       Router.push(`/staffing/staffing/${val}`);  
+      console.log(val);
+      Router.push(`/staffing/staffing/${val}`);  
     }
 
   getDetailsStaffing=async(val)=>{
@@ -203,7 +191,7 @@ class App extends React.Component {
     const data = await getCandidateShiftDetails(val)
     .then(result=>{
       if(result.message=='SUCCESS'){
-        console.log('1');
+        console.log(result.data.staffing_dtls);
         
         }
         else{
@@ -231,8 +219,8 @@ class App extends React.Component {
   }
 
   selectRow = record => {
- 
-  //this.getDetailsStaffing(record.candId);
+  console.log(record.candId);
+  this.getDetailsStaffing(record.candId);
  
   const selectedRowKeys = [...this.state.selectedRowKeys];
   if (selectedRowKeys.indexOf(record.candId) >= 0) {
@@ -251,25 +239,18 @@ class App extends React.Component {
   }
   this.setState({ mobNoGroup });
 
-  const pickupTime = [...this.state.pickupTime];
-  if (pickupTime.indexOf(record.shiftTime) >= 0) {
-    pickupTime.splice(pickupTime.indexOf(record.shiftTime), 1);
-  } else {
-    pickupTime.push(record.shiftTime);
-  }
-  this.setState({ pickupTime });
-
 
 }
 
   render() {
-    
+    console.log(this.state.mobNoGroup);
     const { selectedRowKeys,custData,visible, loading } = this.state;
      const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange
       };
- const columns = [
+console.log(selectedRowKeys);
+    const columns = [
       {
         title: 'Name',
         dataIndex: 'canFirstname',
@@ -339,15 +320,6 @@ class App extends React.Component {
         title: 'Mobile No.',
         dataIndex:'Cantel',
         },
-        {
-        title: 'City.',
-        dataIndex:'cityName',
-        },
-        {
-        title: 'Pickup Time.',
-        dataIndex:'shiftTime',
-          
-        },
       {
         title: 'Address',
         dataIndex: 'canCuraddress',
@@ -409,13 +381,13 @@ class App extends React.Component {
        <Modal
           visible={visible}
           title="Staffing Details"
-          onOk={this.handleOk}
+          onOk={this.handlemultiple}
           onCancel={this.handleCancel}
           footer={[
             <Button key="back" onClick={this.handleCancel}>
               Dismiss
             </Button>,
-            <Button key="submit" loading={loading} onClick={this.handleOk}>
+            <Button key="submit" loading={loading} onClick={this.handlemultiple}>
               Submit
             </Button>
           ]} 

@@ -163,7 +163,7 @@ return(
 
         <Col span={8} style={{ display: 'block'}}>
           
-          <FormItem label='Shift Time'>
+          <FormItem label='Pickup Time'>
             {form.getFieldDecorator('shifttimwe', {
               rules: [
                 {

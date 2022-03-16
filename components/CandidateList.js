@@ -155,6 +155,11 @@ console.log(selectedRowKeys);
       dataIndex: "Cantel",
       width: 150
     },
+     {
+      title: "City",
+      dataIndex: "cityName",
+      width: 150
+    },
     {
       title: "Email",
       dataIndex: "Canemail",
